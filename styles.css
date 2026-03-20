@@ -1,0 +1,317 @@
+/**
+ * TheFundedRoom Rules Guardian - Content Script Styles
+ * Warning overlay and UI styles
+ */
+
+/* Warning Overlay */
+#tfr-warning-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+}
+
+.tfr-overlay-hidden {
+  display: none !important;
+}
+
+.tfr-overlay-visible {
+  display: flex !important;
+}
+
+.tfr-warning-container {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow: hidden;
+  animation: tfr-slide-in 0.3s ease-out;
+}
+
+@keyframes tfr-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.tfr-warning-header {
+  display: flex;
+  align-items: center;
+  padding: 20px 24px;
+  background: linear-gradient(90deg, #ff4757 0%, #ff6348 100%);
+  color: white;
+}
+
+.tfr-warning-icon {
+  font-size: 28px;
+  margin-right: 12px;
+}
+
+.tfr-warning-title {
+  flex: 1;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.tfr-close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 28px;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.tfr-close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.tfr-warning-content {
+  padding: 24px;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.tfr-violation {
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  border-left: 4px solid;
+}
+
+.tfr-violation:last-child {
+  margin-bottom: 0;
+}
+
+.tfr-violation-critical {
+  background: rgba(255, 71, 87, 0.15);
+  border-left-color: #ff4757;
+}
+
+.tfr-violation-warning {
+  background: rgba(255, 193, 7, 0.15);
+  border-left-color: #ffc107;
+}
+
+.tfr-violation-info {
+  background: rgba(76, 175, 80, 0.15);
+  border-left-color: #4caf50;
+}
+
+.tfr-violation-rule {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+  color: #888;
+}
+
+.tfr-violation-critical .tfr-violation-rule {
+  color: #ff4757;
+}
+
+.tfr-violation-warning .tfr-violation-rule {
+  color: #ffc107;
+}
+
+.tfr-violation-info .tfr-violation-rule {
+  color: #4caf50;
+}
+
+.tfr-violation-message {
+  font-size: 15px;
+  line-height: 1.5;
+  color: #fff;
+  font-weight: 500;
+}
+
+.tfr-warning-actions {
+  padding: 16px 24px 24px;
+  display: flex;
+  justify-content: center;
+}
+
+.tfr-dismiss-btn {
+  background: linear-gradient(90deg, #ff4757 0%, #ff6348 100%);
+  color: white;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tfr-dismiss-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 71, 87, 0.4);
+}
+
+.tfr-dismiss-btn:active {
+  transform: translateY(0);
+}
+
+/* Floating indicator */
+#tfr-floating-indicator {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  z-index: 99999;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  min-width: 200px;
+  transition: all 0.3s ease;
+}
+
+#tfr-floating-indicator.tfr-hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(20px);
+}
+
+.tfr-indicator-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tfr-indicator-icon {
+  font-size: 20px;
+}
+
+.tfr-indicator-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  flex: 1;
+}
+
+.tfr-indicator-status {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #4caf50;
+}
+
+.tfr-indicator-status.warning {
+  background: #ffc107;
+  animation: tfr-pulse 1.5s infinite;
+}
+
+.tfr-indicator-status.critical {
+  background: #ff4757;
+  animation: tfr-pulse 0.8s infinite;
+}
+
+@keyframes tfr-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.tfr-indicator-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tfr-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.tfr-stat-label {
+  color: #888;
+}
+
+.tfr-stat-value {
+  color: #fff;
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+}
+
+.tfr-stat-value.positive {
+  color: #4caf50;
+}
+
+.tfr-stat-value.negative {
+  color: #ff4757;
+}
+
+.tfr-progress-bar {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.tfr-progress-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s ease, background 0.3s ease;
+}
+
+.tfr-progress-fill.safe {
+  background: #4caf50;
+}
+
+.tfr-progress-fill.warning {
+  background: #ffc107;
+}
+
+.tfr-progress-fill.critical {
+  background: #ff4757;
+}
+
+/* Scrollbar styling for overlay content */
+.tfr-warning-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.tfr-warning-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.tfr-warning-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.tfr-warning-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}

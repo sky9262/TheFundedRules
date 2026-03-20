@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TheFundedRoom Rules Guardian</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <span class="logo-icon"><img src="icons/icon128.png" alt="TFR" style="width:32px;height:32px;border-radius:6px;object-fit:cover;"></span>
+        <span class="logo-text">TFR Guardian</span>
+      </div>
+      <div class="status-badge" id="status-badge">
+        <span class="status-dot"></span>
+        <span class="status-text">Active</span>
+      </div>
+    </header>
+
+    <!-- Platform Status -->
+    <div class="platform-status" id="platform-status">
+      <div class="status-icon">🌐</div>
+      <div class="status-message">
+        <div class="status-title">Not on TheFundedRoom</div>
+        <div class="status-subtitle">Navigate to thefundedroom.com to activate monitoring</div>
+      </div>
+      <button id="refresh-connection" style="
+        margin-left:auto;padding:6px 12px;background:rgba(108,63,197,0.2);
+        color:#a78bfa;border:1px solid rgba(108,63,197,0.3);border-radius:6px;
+        font-size:11px;cursor:pointer;display:flex;align-items:center;gap:4px;
+      " title="Refresh connection and recalculate">
+        🔄 Refresh
+      </button>
+    </div>
+
+    <!-- Button shown only when not on platform -->
+    <div id="go-to-tfr-section" style="display:none;padding:12px 16px;">
+      <button id="go-to-tfr" style="
+        width:100%;padding:10px;background:linear-gradient(135deg,#6c3fc5,#4a90d9);
+        color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;
+        cursor:pointer;letter-spacing:0.3px;
+      ">🚀 Open TheFundedRoom</button>
+    </div>
+
+    <!-- Main content (hidden when not on platform) -->
+    <div id="main-content">
+    <div class="setup-section" id="setup-section" style="display: none;">
+      <h3>Configure Your Account</h3>
+      <div class="form-group">
+        <label for="account-type">Account Type</label>
+        <select id="account-type">
+          <option value="">Select account type...</option>
+          <option value="instant_funding">Instant Funding</option>
+          <option value="one_step">One-Step Evaluation</option>
+          <option value="two_step">Two-Step Evaluation</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="account-size">Account Size ($)</label>
+        <select id="account-size">
+          <option value="">Select account size...</option>
+          <option value="5000">$5,000</option>
+          <option value="10000">$10,000</option>
+          <option value="25000">$25,000</option>
+          <option value="50000">$50,000</option>
+          <option value="100000">$100,000</option>
+        </select>
+      </div>
+      <div class="form-group" id="stage-group" style="display: none;">
+        <label for="current-stage">Current Stage</label>
+        <select id="current-stage">
+          <option value="">Select stage...</option>
+          <option value="evaluation">Evaluation / Stage 1</option>
+          <option value="stage2">Stage 2</option>
+          <option value="funded">Funded Account</option>
+        </select>
+      </div>
+      <button class="btn-primary" id="save-account">Save Account Settings</button>
+    </div>
+
+    <!-- Account Info (shown when configured) -->
+    <div class="account-info" id="account-info" style="display: none;">
+      <div class="account-header">
+        <div class="account-type" id="display-account-type">Instant Funding</div>
+        <button class="btn-icon" id="edit-account" title="Edit Account">✏️</button>
+      </div>
+      <div class="account-details">
+        <div class="detail-item">
+          <span class="detail-label">Account Size</span>
+          <span class="detail-value" id="display-account-size">$50,000</span>
+        </div>
+        <div class="detail-item" id="display-stage-container">
+          <span class="detail-label">Stage</span>
+          <span class="detail-value" id="display-stage">Evaluation</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trading Dashboard -->
+    <div class="dashboard" id="dashboard" style="display: none;">
+      <h3>Live Trading Stats</h3>
+      
+      <!-- Equity Display -->
+      <div class="equity-card">
+        <div class="equity-label">Current Equity</div>
+        <div class="equity-value" id="current-equity">--</div>
+        <div class="equity-change" id="equity-change">--</div>
+      </div>
+
+      <!-- Rule Progress -->
+      <div class="rules-grid">
+        <div class="rule-card" id="daily-loss-card">
+          <div class="rule-header">
+            <span class="rule-name">Daily Loss</span>
+            <span class="rule-limit" id="daily-loss-limit">3%</span>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" id="daily-loss-progress" style="width: 0%"></div>
+            </div>
+            <div class="progress-stats">
+              <span id="daily-loss-current">0%</span>
+              <span>Limit: <span id="daily-loss-max">3%</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="rule-card" id="total-loss-card">
+          <div class="rule-header">
+            <span class="rule-name">Max Loss</span>
+            <span class="rule-limit" id="total-loss-limit">6%</span>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" id="total-loss-progress" style="width: 0%"></div>
+            </div>
+            <div class="progress-stats">
+              <span id="total-loss-current">0%</span>
+              <span>Limit: <span id="total-loss-max">6%</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="rule-card" id="profit-target-card" style="display: none; grid-column: span 2;">
+          <div class="rule-header">
+            <span class="rule-name">Profit Target</span>
+            <span class="rule-limit" id="profit-target-limit">10%</span>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill profit" id="profit-target-progress" style="width: 0%"></div>
+            </div>
+            <div class="progress-stats">
+              <span id="profit-target-current">0%</span>
+              <span>Target: <span id="profit-target-max">10%</span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Daily Target Card (Funded accounts with user-set target) -->
+        <div class="rule-card" id="daily-target-card" style="display: none; grid-column: span 2;">
+          <div class="rule-header">
+            <span class="rule-name">🎯 Daily Target</span>
+            <span class="rule-limit" id="daily-target-limit">2%</span>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill profit" id="daily-target-progress" style="width: 0%"></div>
+            </div>
+            <div class="progress-stats">
+              <span id="daily-target-current">$0.00</span>
+              <span>Goal: <span id="daily-target-max">$200</span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Toxicity Card (Sub-1-minute trades) -->
+        <div class="rule-card" id="toxicity-card" style="display: none; grid-column: span 2;">
+          <div class="rule-header">
+            <span class="rule-name">&#9888;&#65039; Toxicity Level</span>
+            <span class="rule-limit" id="toxicity-level">Low</span>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" id="toxicity-progress" style="width: 0%"></div>
+            </div>
+            <div class="progress-stats">
+              <span id="toxicity-percentage">0%</span>
+              <span>Limit: 10%</span>
+            </div>
+          </div>
+          <div id="toxicity-details" style="margin-top:8px;font-size:11px;color:#888;">
+            <span id="toxicity-trades">0/0 trades</span> under 1 min
+          </div>
+          <div id="toxicity-profit" style="margin-top:6px;font-size:11px;">
+            <span id="toxicity-profit-amount"></span>
+          </div>
+          <div id="toxicity-suggestions" style="margin-top:8px;padding:8px;background:rgba(255,255,255,0.03);border-radius:6px;font-size:11px;color:#aaa;">
+            <!-- Suggestions inserted here -->
+          </div>
+          <button id="recheck-toxicity" style="margin-top:10px;width:100%;padding:6px;background:rgba(108,63,197,0.2);color:#a78bfa;border:1px solid rgba(108,63,197,0.3);border-radius:6px;font-size:11px;cursor:pointer;">&#128260; Recheck Toxicity</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Violations Section -->
+    <div class="violations-section" id="violations-section" style="display: none;">
+      <h3>⚠️ Active Warnings</h3>
+      <div class="violations-list" id="violations-list">
+        <!-- Violations will be inserted here -->
+      </div>
+    </div>
+
+    <!-- Trading Activity -->
+    <div class="trading-activity" id="trading-activity" style="display: none;">
+      <h3>📊 Trading Activity</h3>
+      
+      <!-- Open Positions -->
+      <div class="activity-section" id="positions-section" style="display: none;">
+        <div class="activity-header">
+          <span class="activity-title">Open Positions</span>
+          <span class="activity-count" id="positions-count">0</span>
+        </div>
+        <div class="activity-list" id="positions-list"></div>
+      </div>
+      
+      <!-- Open Orders -->
+      <div class="activity-section" id="orders-section" style="display: none;">
+        <div class="activity-header">
+          <span class="activity-title">Open Orders</span>
+          <span class="activity-count" id="orders-count">0</span>
+        </div>
+        <div class="activity-list" id="orders-list"></div>
+      </div>
+      
+      <!-- Recent Trades -->
+      <div class="activity-section" id="trades-section" style="display: none;">
+        <div class="activity-header">
+          <span class="activity-title">Recent Trades</span>
+          <span class="activity-count" id="trades-count">0</span>
+        </div>
+        <div class="activity-list" id="trades-list"></div>
+      </div>
+    </div>
+
+    <!-- Rules Reference -->
+    <div class="rules-reference">
+      <h3>📋 Rules Reference</h3>
+      <div class="rules-accordion" id="rules-accordion">
+        <!-- Rules will be populated based on account type -->
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div class="settings-section">
+      <h3>⚙️ Settings</h3>
+      <div class="setting-item">
+        <label class="toggle">
+          <input type="checkbox" id="enable-extension" checked>
+          <span class="toggle-slider"></span>
+          <span class="toggle-label">Enable Monitoring</span>
+        </label>
+      </div>
+      <div class="setting-item">
+        <label class="toggle">
+          <input type="checkbox" id="show-notifications" checked>
+          <span class="toggle-slider"></span>
+          <span class="toggle-label">Show Notifications</span>
+        </label>
+      </div>
+      <div class="setting-item" style="position:relative;">
+        <label for="warning-threshold" class="threshold-label" title="Get warned when you've used this percentage of your daily loss limit. Example: At 80%, you'll be warned when you've lost 4% out of a 5% daily limit.">
+          Warning Threshold (%)
+          <span style="color:#888;font-size:11px;margin-left:4px;">&#9432;</span>
+        </label>
+        <input type="range" id="warning-threshold" min="50" max="95" value="80">
+        <span class="threshold-value" id="threshold-value">80%</span>
+      </div>
+
+      <!-- Daily Profit Target (Funded only) -->
+      <div id="daily-target-setting" style="display:none;">
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.08);">
+          <label style="font-size:12px;color:#aaa;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;">Daily Profit Target</label>
+          <p style="font-size:11px;color:#666;margin:4px 0 10px;">Optional: Set your own daily profit goal (funded accounts have no official target)</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div>
+              <label style="font-size:11px;color:#888;display:block;margin-bottom:4px;">In %</label>
+              <input type="number" id="daily-target-pct" min="0" max="100" step="0.1" placeholder="e.g. 2"
+                style="width:100%;background:#1a1f2e;border:1px solid rgba(255,255,255,0.12);border-radius:6px;padding:6px 8px;color:#fff;font-size:13px;box-sizing:border-box;">
+            </div>
+            <div>
+              <label style="font-size:11px;color:#888;display:block;margin-bottom:4px;">In $</label>
+              <input type="number" id="daily-target-usd" min="0" step="1" placeholder="e.g. 200"
+                style="width:100%;background:#1a1f2e;border:1px solid rgba(255,255,255,0.12);border-radius:6px;padding:6px 8px;color:#fff;font-size:13px;box-sizing:border-box;">
+            </div>
+          </div>
+          <p style="font-size:10px;color:#555;margin:6px 0 0;">&#9432; Editing one field auto-fills the other based on your account size</p>
+          <div style="display:flex;gap:8px;margin-top:10px;">
+            <button id="save-daily-target" style="flex: 1 1 0%;padding: 7px;color: rgb(255 255 255);background: #6c3fc5;border: none;border-radius: 6px;font-size: 12px;font-weight: 600;cursor: pointer;">✓ Save</button>
+            <button id="reset-daily-target" style="
+              flex:1;padding:7px;background:transparent;
+              color:#e05a5a;border:1px solid #e05a5a55;border-radius:6px;font-size:12px;cursor:pointer;
+            ">&#8635; Reset</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div><!-- /main-content -->
+
+    <!-- Footer -->
+    <footer class="footer">
+      <button class="btn-secondary" id="reset-data">Reset Daily Data</button>
+      <div class="version">v1.0.0</div>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

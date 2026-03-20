@@ -1,0 +1,50 @@
+{
+  "manifest_version": 3,
+  "name": "TheFundedRoom Rules Guardian",
+  "version": "1.0.0",
+  "description": "Monitors your trading activity on TheFundedRoom and warns you before breaking any rules",
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "storage",
+    "notifications"
+  ],
+  "host_permissions": [
+    "https://thefundedroom.com/*",
+    "https://*.thefundedroom.com/*",
+    "https://forex-backend-7rqa.onrender.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://thefundedroom.com/*",
+        "https://*.thefundedroom.com/*"
+      ],
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["warning-overlay.html", "warning-styles.css"],
+      "matches": ["https://thefundedroom.com/*", "https://*.thefundedroom.com/*"]
+    }
+  ]
+}
